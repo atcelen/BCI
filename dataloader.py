@@ -21,7 +21,7 @@ plt.rcParams['figure.figsize'] = [16, 7]
 
 def Y_loader(protocols):
     number_of_trials = 4
-    number_of_runs = 32    
+    number_of_runs = 208    
     Y=np.zeros((number_of_runs, number_of_trials))
     for k in range(number_of_runs):
         a = load_labels(protocols[k])
@@ -97,10 +97,12 @@ def bandpass_multiEEG(data,f_low,f_high,fs):
     low_freq = norm_freq(f_low, fs)
     high_freq = norm_freq(f_high, fs)
     #Wn=[low_freq, high_freq], btype='bandpass'
-    coef_filt = scipy.signal.butter(N=4,Wn= 0.05, output='sos')
+    coef_filt = scipy.signal.butter(N=4,Wn=[0.008,0.32], output='sos',btype='bandpass')
     data_filt = np.zeros(data.shape)
     for trial in range(data.shape[0]):
         for chan in range(data.shape[1]):
+            b_notch, a_notch = signal.iirnotch(50, 30, fs)
+            data_filt[trial,chan,:] =outputSignal = signal.filtfilt(b_notch, a_notch, data_filt[trial,chan,:])
             data_filt[trial,chan,:] = scipy.signal.sosfiltfilt(coef_filt, x=data[trial, chan, :])
     return data_filt    
 def trim_start_end(filename, num_channels):
@@ -130,6 +132,7 @@ def trim_start_end(filename, num_channels):
     
     trimmed_data = data[:,return_list[0]:return_list[1]+1]
     print(trimmed_data.shape)
+    print(filename)
     #final_data_cross = np.ndarray((4,8,500))
     
     final_data_motor = np.ndarray((4,num_channels,1000))
@@ -161,22 +164,22 @@ def trim_start_end(filename, num_channels):
 
 #y = trim_start_end('session1_run1_Deniz.csv')
 #print(y)
-protocols = [#'run1.txt',
-            #  'run2.txt',
-            #  'run3.txt',
-            #  'run4.txt',
-            #  'run5.txt',
-            #  'run6.txt',
-            #  'run7.txt',
-            #  'run8.txt',
-            #  'run9.txt',
-            #  'run10.txt',
-            #  'run11.txt',
-            #  'run12.txt',
-            #  'run13.txt',
-            #  'run14.txt',
-            #  'run15.txt',
-            #  'run16.txt',
+protocols = ['run1.txt',
+             'run2.txt',
+             'run3.txt',
+             'run4.txt',
+             'run5.txt',
+             'run6.txt',
+             'run7.txt',
+             'run8.txt',
+             'run9.txt',
+             'run10.txt',
+             'run11.txt',
+             'run12.txt',
+             'run13.txt',
+             'run14.txt',
+             'run15.txt',
+             'run16.txt',
             # #  #'run9.txt',
             # #  #'run10.txt',
             # #  #'run11.txt',
@@ -232,24 +235,184 @@ protocols = [#'run1.txt',
             'superrun29.txt',
             'superrun30.txt',
             'superrun31.txt',
-            'superrun32.txt'
+            'superrun32.txt',
+            'superrunS2_0.txt',
+            'superrunS2_1.txt',
+            'superrunS2_2.txt',
+            'superrunS2_3.txt',
+            'superrunS2_4.txt',
+            'superrunS2_5.txt',
+            'superrunS2_6.txt',
+            'superrunS2_7.txt',
+            'superrunS2_8.txt',
+            'superrunS2_9.txt',
+            'superrunS2_10.txt',
+            'superrunS2_11.txt',
+            'superrunS2_12.txt',
+            'superrunS2_13.txt',
+            'superrunS2_14.txt',
+            'superrunS2_15.txt',
+            'superrunS2_16.txt',
+            'superrunS2_17.txt',
+            'superrunS2_18.txt',
+            'superrunS2_19.txt',
+            'superrunS2_20.txt',
+            'superrunS2_21.txt',
+            'superrunS2_22.txt',
+            'superrunS2_23.txt',
+            'superrunS2_24.txt',
+            'superrunS2_25.txt',
+            'superrunS2_26.txt',
+            'superrunS2_27.txt',
+            'superrunS2_28.txt',
+            'superrunS2_29.txt',
+            'superrunS2_30.txt',
+            'superrunS2_31.txt',
+            'superrunS3_0.txt',
+            'superrunS3_1.txt',
+            'superrunS3_2.txt',
+            'superrunS3_3.txt',
+            'superrunS3_4.txt',
+            'superrunS3_5.txt',
+            'superrunS3_6.txt',
+            'superrunS3_7.txt',
+            'superrunS3_8.txt',
+            'superrunS3_9.txt',
+            'superrunS3_10.txt',
+            'superrunS3_11.txt',
+            'superrunS3_12.txt',
+            'superrunS3_13.txt',
+            'superrunS3_14.txt',
+            'superrunS3_15.txt',
+            'superrunS3_16.txt',
+            'superrunS3_17.txt',
+            'superrunS3_18.txt',
+            'superrunS3_19.txt',
+            'superrunS3_20.txt',
+            'superrunS3_21.txt',
+            'superrunS3_22.txt',
+            'superrunS3_23.txt',
+            'superrunS3_24.txt',
+            'superrunS3_25.txt',
+            'superrunS3_26.txt',
+            'superrunS3_27.txt',
+            'superrunS3_28.txt',
+            'superrunS3_29.txt',
+            'superrunS3_30.txt',
+            'superrunS3_31.txt',
+            'superrunS4_0.txt',
+            'superrunS4_1.txt',
+            'superrunS4_2.txt',
+            'superrunS4_3.txt',
+            'superrunS4_4.txt',
+            'superrunS4_5.txt',
+            'superrunS4_6.txt',
+            'superrunS4_7.txt',
+            'superrunS4_8.txt',
+            'superrunS4_9.txt',
+            'superrunS4_10.txt',
+            'superrunS4_11.txt',
+            'superrunS4_12.txt',
+            'superrunS4_13.txt',
+            'superrunS4_14.txt',
+            'superrunS4_15.txt',
+            'superrunS4_16.txt',
+            'superrunS4_17.txt',
+            'superrunS4_18.txt',
+            'superrunS4_19.txt',
+            'superrunS4_20.txt',
+            'superrunS4_21.txt',
+            'superrunS4_22.txt',
+            'superrunS4_23.txt',
+            'superrunS4_24.txt',
+            'superrunS4_25.txt',
+            'superrunS4_26.txt',
+            'superrunS4_27.txt',
+            'superrunS4_28.txt',
+            'superrunS4_29.txt',
+            'superrunS4_30.txt',
+            'superrunS4_31.txt',
+            'superrunS5_0.txt',
+            'superrunS5_1.txt',
+            'superrunS5_2.txt',
+            'superrunS5_3.txt',
+            'superrunS5_4.txt',
+            'superrunS5_5.txt',
+            'superrunS5_6.txt',
+            'superrunS5_7.txt',
+            'superrunS5_8.txt',
+            'superrunS5_9.txt',
+            'superrunS5_10.txt',
+            'superrunS5_11.txt',
+            'superrunS5_12.txt',
+            'superrunS5_13.txt',
+            'superrunS5_14.txt',
+            'superrunS5_15.txt',
+            'superrunS5_16.txt',
+            'superrunS5_17.txt',
+            'superrunS5_18.txt',
+            'superrunS5_19.txt',
+            'superrunS5_20.txt',
+            'superrunS5_21.txt',
+            'superrunS5_22.txt',
+            'superrunS5_23.txt',
+            'superrunS5_24.txt',
+            'superrunS5_25.txt',
+            'superrunS5_26.txt',
+            'superrunS5_27.txt',
+            'superrunS5_28.txt',
+            'superrunS5_29.txt',
+            'superrunS5_30.txt',
+            'superrunS5_31.txt',
+            'superrunS6_0.txt',
+            'superrunS6_1.txt',
+            'superrunS6_2.txt',
+            'superrunS6_3.txt',
+            'superrunS6_4.txt',
+            'superrunS6_5.txt',
+            'superrunS6_6.txt',
+            'superrunS6_7.txt',
+            'superrunS6_8.txt',
+            'superrunS6_9.txt',
+            'superrunS6_10.txt',
+            'superrunS6_11.txt',
+            'superrunS6_12.txt',
+            'superrunS6_13.txt',
+            'superrunS6_14.txt',
+            'superrunS6_15.txt',
+            'superrunS6_16.txt',
+            'superrunS6_17.txt',
+            'superrunS6_18.txt',
+            'superrunS6_19.txt',
+            'superrunS6_20.txt',
+            'superrunS6_21.txt',
+            'superrunS6_22.txt',
+            'superrunS6_23.txt',
+            'superrunS6_24.txt',
+            'superrunS6_25.txt',
+            'superrunS6_26.txt',
+            'superrunS6_27.txt',
+            'superrunS6_28.txt',
+            'superrunS6_29.txt',
+            'superrunS6_30.txt',
+            'superrunS6_31.txt',
              ]
-filenames = [#'session4_run1_Deniz.csv',
-            #  'session4_run2_Deniz.csv',
-            #  'session4_run3_Deniz.csv',
-            #  'session4_run4_Deniz.csv',
-            #  'session4_run5_Deniz.csv',
-            #  'session4_run6_Deniz.csv',
-            #  'session4_run7_Deniz.csv',
-            #  'session4_run8_Deniz.csv',
-            #  'session5_run1_Deniz.csv',
-            #  'session5_run2_Deniz.csv',
-            #  'session5_run3_Deniz.csv',
-            #  'session5_run4_Deniz.csv',
-            #  'session5_run5_Deniz.csv',
-            #  'session5_run6_Deniz.csv',
-            #  'session5_run7_Deniz.csv',
-            #  'session5_run8_Deniz.csv',
+filenames = ['session4_run1_Deniz.csv',
+             'session4_run2_Deniz.csv',
+             'session4_run3_Deniz.csv',
+             'session4_run4_Deniz.csv',
+             'session4_run5_Deniz.csv',
+             'session4_run6_Deniz.csv',
+             'session4_run7_Deniz.csv',
+             'session4_run8_Deniz.csv',
+             'session5_run1_Deniz.csv',
+             'session5_run2_Deniz.csv',
+             'session5_run3_Deniz.csv',
+             'session5_run4_Deniz.csv',
+             'session5_run5_Deniz.csv',
+             'session5_run6_Deniz.csv',
+             'session5_run7_Deniz.csv',
+             'session5_run8_Deniz.csv',
             #   'session2_run1_Deniz.csv',
             #   'session2_run2_Deniz.csv',
             #   'session2_run3_Deniz.csv',
@@ -305,48 +468,244 @@ filenames = [#'session4_run1_Deniz.csv',
             'SessionSuper1w_run29_Deniz.csv',
             'SessionSuper1w_run30_Deniz.csv',
             'SessionSuper1w_run31_Deniz.csv',
-            'SessionSuper1w_run32_Deniz.csv'
+            'SessionSuper2w_run32_Deniz.csv',
+            'SessionSuper2w_run1_Deniz.csv',
+            'SessionSuper2w_run2_Deniz.csv',
+            'SessionSuper2w_run3_Deniz.csv',
+            'SessionSuper2w_run4_Deniz.csv',
+            'SessionSuper2w_run5_Deniz.csv',
+            'SessionSuper2w_run6_Deniz.csv',
+            'SessionSuper2w_run7_Deniz.csv',
+            'SessionSuper2w_run8_Deniz.csv',
+            'SessionSuper2w_run9_Deniz.csv',
+            'SessionSuper2w_run10_Deniz.csv',
+            'SessionSuper2w_run11_Deniz.csv',
+            'SessionSuper2w_run12_Deniz.csv',
+            'SessionSuper2w_run13_Deniz.csv',
+            'SessionSuper2w_run14_Deniz.csv',
+            'SessionSuper2w_run15_Deniz.csv',
+            'SessionSuper2w_run16_Deniz.csv',
+            'SessionSuper2w_run17_Deniz.csv',
+            'SessionSuper2w_run18_Deniz.csv',
+            'SessionSuper2w_run19_Deniz.csv',
+            'SessionSuper2w_run20_Deniz.csv',
+            'SessionSuper2w_run21_Deniz.csv',
+            'SessionSuper2w_run22_Deniz.csv',
+            'SessionSuper2w_run23_Deniz.csv',
+            'SessionSuper2w_run24_Deniz.csv',
+            'SessionSuper2w_run25_Deniz.csv',
+            'SessionSuper2w_run26_Deniz.csv',
+            'SessionSuper2w_run27_Deniz.csv',
+            'SessionSuper2w_run28_Deniz.csv',
+            'SessionSuper2w_run29_Deniz.csv',
+            'SessionSuper2w_run30_Deniz.csv',
+            'SessionSuper2w_run31_Deniz.csv',
+            'SessionSuper2w_run32_Deniz.csv',
+            'SessionSuper3w_run1_Deniz.csv',
+            'SessionSuper3w_run2_Deniz.csv',
+            'SessionSuper3w_run3_Deniz.csv',
+            'SessionSuper3w_run4_Deniz.csv',
+            'SessionSuper3w_run5_Deniz.csv',
+            'SessionSuper3w_run6_Deniz.csv',
+            'SessionSuper3w_run7_Deniz.csv',
+            'SessionSuper3w_run8_Deniz.csv',
+            'SessionSuper3w_run9_Deniz.csv',
+            'SessionSuper3w_run10_Deniz.csv',
+            'SessionSuper3w_run11_Deniz.csv',
+            'SessionSuper3w_run12_Deniz.csv',
+            'SessionSuper3w_run13_Deniz.csv',
+            'SessionSuper3w_run14_Deniz.csv',
+            'SessionSuper3w_run15_Deniz.csv',
+            'SessionSuper3w_run16_Deniz.csv',
+            'SessionSuper3w_run17_Deniz.csv',
+            'SessionSuper3w_run18_Deniz.csv',
+            'SessionSuper3w_run19_Deniz.csv',
+            'SessionSuper3w_run20_Deniz.csv',
+            'SessionSuper3w_run21_Deniz.csv',
+            'SessionSuper3w_run22_Deniz.csv',
+            'SessionSuper3w_run23_Deniz.csv',
+            'SessionSuper3w_run24_Deniz.csv',
+            'SessionSuper3w_run25_Deniz.csv',
+            'SessionSuper3w_run26_Deniz.csv',
+            'SessionSuper3w_run27_Deniz.csv',
+            'SessionSuper3w_run28_Deniz.csv',
+            'SessionSuper3w_run29_Deniz.csv',
+            'SessionSuper3w_run30_Deniz.csv',
+            'SessionSuper3w_run31_Deniz.csv',
+            'SessionSuper3w_run32_Deniz.csv',
+            'SessionSuper4w_run1_Deniz.csv',
+            'SessionSuper4w_run2_Deniz.csv',
+            'SessionSuper4w_run3_Deniz.csv',
+            'SessionSuper4w_run4_Deniz.csv',
+            'SessionSuper4w_run5_Deniz.csv',
+            'SessionSuper4w_run6_Deniz.csv',
+            'SessionSuper4w_run7_Deniz.csv',
+            'SessionSuper4w_run8_Deniz.csv',
+            'SessionSuper4w_run9_Deniz.csv',
+            'SessionSuper4w_run10_Deniz.csv',
+            'SessionSuper4w_run11_Deniz.csv',
+            'SessionSuper4w_run12_Deniz.csv',
+            'SessionSuper4w_run13_Deniz.csv',
+            'SessionSuper4w_run14_Deniz.csv',
+            'SessionSuper4w_run15_Deniz.csv',
+            'SessionSuper4w_run16_Deniz.csv',
+            'SessionSuper4w_run17_Deniz.csv',
+            'SessionSuper4w_run18_Deniz.csv',
+            'SessionSuper4w_run19_Deniz.csv',
+            'SessionSuper4w_run20_Deniz.csv',
+            'SessionSuper4w_run21_Deniz.csv',
+            'SessionSuper4w_run22_Deniz.csv',
+            'SessionSuper4w_run23_Deniz.csv',
+            'SessionSuper4w_run24_Deniz.csv',
+            'SessionSuper4w_run25_Deniz.csv',
+            'SessionSuper4w_run26_Deniz.csv',
+            'SessionSuper4w_run27_Deniz.csv',
+            'SessionSuper4w_run28_Deniz.csv',
+            'SessionSuper4w_run29_Deniz.csv',
+            'SessionSuper4w_run30_Deniz.csv',
+            'SessionSuper4w_run31_Deniz.csv',
+            'SessionSuper4w_run32_Deniz.csv',
+            'SessionSuper5w_run1_Deniz.csv',
+            'SessionSuper5w_run2_Deniz.csv',
+            'SessionSuper5w_run3_Deniz.csv',
+            'SessionSuper5w_run4_Deniz.csv',
+            'SessionSuper5w_run5_Deniz.csv',
+            'SessionSuper5w_run6_Deniz.csv',
+            'SessionSuper5w_run7_Deniz.csv',
+            'SessionSuper5w_run8_Deniz.csv',
+            'SessionSuper5w_run9_Deniz.csv',
+            'SessionSuper5w_run10_Deniz.csv',
+            'SessionSuper5w_run11_Deniz.csv',
+            'SessionSuper5w_run12_Deniz.csv',
+            'SessionSuper5w_run13_Deniz.csv',
+            'SessionSuper5w_run14_Deniz.csv',
+            'SessionSuper5w_run15_Deniz.csv',
+            'SessionSuper5w_run16_Deniz.csv',
+            'SessionSuper5w_run17_Deniz.csv',
+            'SessionSuper5w_run18_Deniz.csv',
+            'SessionSuper5w_run19_Deniz.csv',
+            'SessionSuper5w_run20_Deniz.csv',
+            'SessionSuper5w_run21_Deniz.csv',
+            'SessionSuper5w_run22_Deniz.csv',
+            'SessionSuper5w_run23_Deniz.csv',
+            'SessionSuper5w_run24_Deniz.csv',
+            'SessionSuper5w_run25_Deniz.csv',
+            'SessionSuper5w_run26_Deniz.csv',
+            'SessionSuper5w_run27_Deniz.csv',
+            'SessionSuper5w_run28_Deniz.csv',
+            'SessionSuper5w_run29_Deniz.csv',
+            'SessionSuper5w_run30_Deniz.csv',
+            'SessionSuper5w_run31_Deniz.csv',
+            'SessionSuper5w_run32_Deniz.csv',
+            'SessionSuper6w_run1_Deniz.csv',
+            'SessionSuper6w_run2_Deniz.csv',
+            'SessionSuper6w_run3_Deniz.csv',
+            'SessionSuper6w_run4_Deniz.csv',
+            'SessionSuper6w_run5_Deniz.csv',
+            'SessionSuper6w_run6_Deniz.csv',
+            'SessionSuper6w_run7_Deniz.csv',
+            'SessionSuper6w_run8_Deniz.csv',
+            'SessionSuper6w_run9_Deniz.csv',
+            'SessionSuper6w_run10_Deniz.csv',
+            'SessionSuper6w_run11_Deniz.csv',
+            'SessionSuper6w_run12_Deniz.csv',
+            'SessionSuper6w_run13_Deniz.csv',
+            'SessionSuper6w_run14_Deniz.csv',
+            'SessionSuper6w_run15_Deniz.csv',
+            'SessionSuper6w_run16_Deniz.csv',
+            'SessionSuper6w_run17_Deniz.csv',
+            'SessionSuper6w_run18_Deniz.csv',
+            'SessionSuper6w_run19_Deniz.csv',
+            'SessionSuper6w_run20_Deniz.csv',
+            'SessionSuper6w_run21_Deniz.csv',
+            'SessionSuper6w_run22_Deniz.csv',
+            'SessionSuper6w_run23_Deniz.csv',
+            'SessionSuper6w_run24_Deniz.csv',
+            'SessionSuper6w_run25_Deniz.csv',
+            'SessionSuper6w_run26_Deniz.csv',
+            'SessionSuper6w_run27_Deniz.csv',
+            'SessionSuper6w_run28_Deniz.csv',
+            'SessionSuper6w_run29_Deniz.csv',
+            'SessionSuper6w_run30_Deniz.csv',
+            'SessionSuper6w_run31_Deniz.csv',
+            'SessionSuper6w_run32_Deniz.csv'
              ]
 
 def trim_multiple(num_channels):
-    trimmed_files = np.ndarray((128, num_channels,1000))
+    trimmed_files = np.ndarray((4*len(filenames), num_channels,1000))
     counter = 0
     for file in filenames:
         trimmed_files[counter:counter+4]= trim_start_end(file, num_channels)
         counter+=4
     print(np.shape(trimmed_files))
-    # plt.figure(1)
-    # plt.plot(trimmed_files[0,0,:])
-    # plt.show()
-    # plt.plot(trimmed_files[0,1,:])
-    # plt.show()
-    # plt.plot(trimmed_files[0,2,:])
-    # plt.show()
-    # plt.plot(trimmed_files[0,3,:])
-    # plt.show()
-    trimmed_files_filtered = bandpass_multiEEG(trimmed_files,4,48,250)
+    plt.figure(1)
+    plt.plot(trimmed_files[0,0,:])
+    plt.show()
+    plt.plot(trimmed_files[1,0,:])
+    plt.show()
+    plt.plot(trimmed_files[2,0,:])
+    plt.show()
+    plt.plot(trimmed_files[3,0,:])
+    plt.show()
+    plt.plot(trimmed_files[4,0,:])
+    plt.show()
+    plt.plot(trimmed_files[5,0,:])
+    plt.show()
+    plt.plot(trimmed_files[6,0,:])
+    plt.show()
+    plt.plot(trimmed_files[7,0,:])
+    plt.show()
+    trimmed_files_filtered = bandpass_multiEEG(trimmed_files,0.1,40,250)
     trimmed_files_filtered = np.asarray(trimmed_files_filtered)
-    for trial in range(0, trimmed_files_filtered.shape[0]):
-        for channel in range(0, trimmed_files_filtered.shape[1]):
-            max = np.max(trimmed_files_filtered[trial,channel,:])
-            min = np.min(trimmed_files_filtered[trial,channel,:])
-            #X_std = (trimmed_files_filtered - min) /  (max-min)
-            sum = np.sum(trimmed_files_filtered[trial,channel,:])
-            ave = sum / (trimmed_files_filtered.shape[2])
-            noBi = np.asarray(trimmed_files_filtered[trial][channel] - ave) 
-            trimmed_files_filtered[trial][channel] = noBi
     plt.figure(1)
     #plt.plot(trimmed_files[0,0,:])
     plt.plot(trimmed_files_filtered[0,0,:])
     plt.show()
     #plt.plot(trimmed_files[0,1,:])
-    plt.plot(trimmed_files_filtered[0,1,:])
+    plt.plot(trimmed_files_filtered[1,0,:])
     plt.show()
     #plt.plot(trimmed_files[0,2,:])
-    plt.plot(trimmed_files_filtered[0,2,:])
+    plt.plot(trimmed_files_filtered[2,0,:])
     plt.show()
     #plt.plot(trimmed_files[0,3,:])
-    plt.plot(trimmed_files_filtered[0,3,:])
+    plt.plot(trimmed_files_filtered[3,0,:])
+    plt.show()
+
+    for trial in range(0, trimmed_files_filtered.shape[0]):
+        for channel in range(0, trimmed_files_filtered.shape[1]):
+            max = np.max(trimmed_files_filtered[trial,channel,:])
+            min = np.min(trimmed_files_filtered[trial,channel,:])
+            X_std = (trimmed_files_filtered[trial,channel,:]-min) /(max-min)
+            #sum = np.sum(trimmed_files_filtered[trial,channel,:])
+            #ave = sum / (trimmed_files_filtered.shape[2])
+            #noBi = np.asarray(trimmed_files_filtered[trial,channel,:] - ave)
+            trimmed_files_filtered[trial][channel] = X_std
+            
+    # for trial in range(0, trimmed_files_filtered.shape[0]):
+    #     for channel in range(0, trimmed_files_filtered.shape[1]):
+    #         if trial % 4 == 0:
+    #             max = 0
+    #             for i in range(0,4):
+    #                 max_i = np.max(trimmed_files_filtered[trial+i,channel,:])
+    #                 if max_i > max:
+    #                     max = max_i
+    #             for i in range(0,4):
+    #                 trimmed_files_filtered[trial+i][channel] = trimmed_files_filtered[trial+i][channel] / max
+                        
+
+    plt.figure(1)
+    #plt.plot(trimmed_files[0,0,:])
+    plt.plot(trimmed_files_filtered[0,0,:])
+    plt.show()
+    #plt.plot(trimmed_files[0,1,:])
+    plt.plot(trimmed_files_filtered[1,0,:])
+    plt.show()
+    #plt.plot(trimmed_files[0,2,:])
+    plt.plot(trimmed_files_filtered[2,0,:])
+    plt.show()
+    #plt.plot(trimmed_files[0,3,:])
+    plt.plot(trimmed_files_filtered[3,0,:])
+    #plt.plot(trimmed_files[0,0,:])
     plt.show()
     print(trimmed_files.shape, Y_loader(protocols).shape)
     return trimmed_files_filtered, Y_loader(protocols)

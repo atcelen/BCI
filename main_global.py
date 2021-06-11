@@ -38,6 +38,7 @@ from keras import backend as K
 from sklearn.model_selection import StratifiedKFold
 import matplotlib.pyplot as plt
 from imblearn.over_sampling import SMOTE
+from sklearn.metrics import confusion_matrix
 
 # EEGNet models
 import models as models
@@ -103,7 +104,7 @@ T_list = [4] # duration to classify {1,2,3}
 # model settings 
 kernLength = int(np.ceil(128/n_ds))
 poolLength = int(np.ceil(8/n_ds))
-num_splits = 6
+num_splits = 5
 acc = np.zeros((num_splits,2))
 
 
@@ -115,7 +116,7 @@ for num_classes in num_classes_list:
             # Load data
             #X, y = get.get_data(datapath, n_classes=num_classes)
             X, y = dataLoader.trim_multiple(8)
-            y = y.flatten()
+            y = y.flatten()  
             #print(X.shape, y.shape)
             # np.set_printoptions(threshold=np.inf)
             # print(X)
@@ -128,8 +129,8 @@ for num_classes in num_classes_list:
             #X = eeg_reduction(X,n_ds = n_ds, n_ch = n_ch, T = T)
 
             # Expand dimensions to match expected EEGNet input
-            X = (np.expand_dims(X, axis=-1))
-            print(X.shape)
+            #X = (np.expand_dims(X, axis=-1))
+            #print(X.shape)
             # number of temporal sample per trial
             n_samples = np.shape(X)[2]
             print(n_samples)
@@ -137,12 +138,13 @@ for num_classes in num_classes_list:
             # convert labels to one-hot encodings.
             y_cat = np_utils.to_categorical(y)
             print("ycat", y_cat.shape)
-            y_cat = np.reshape(y_cat, (64,2))
+            #Degistirr!!!!
+            y_cat = np.reshape(y_cat, (832,4))
             #print("ycat", y_cat)
 
 
             # using 5 folds
-            kf = StratifiedKFold(n_splits = num_splits, shuffle=True)
+            kf = StratifiedKFold(n_splits = num_splits, shuffle = True)
 
             #print(X.shape,y.shape)
             split_ctr = 0
@@ -152,32 +154,36 @@ for num_classes in num_classes_list:
                 
                 # init model 
                 model = models.EEGNet(nb_classes = num_classes, Chans=n_ch, Samples=n_samples, regRate=0.25,
-                                dropoutRate=0.7, kernLength=kernLength, poolLength=poolLength, numFilters=4, 
+                                dropoutRate=0.4, kernLength=kernLength, poolLength=poolLength, numFilters=4, 
                                 dropoutType='Dropout')
                
                 print(model.summary())
 
                 # Set Learning Rate
-                adam_alpha = Adam(lr=(0.0001))
+                adam_alpha = Adam(lr=(0.001))
                 model.compile(loss='categorical_crossentropy', optimizer=adam_alpha, metrics = ['accuracy'])
                 np.random.seed(42*(split_ctr+1))
                 #np.random.shuffle(train)
                 # do training
                 # sm = SMOTE(sampling_strategy = 'all')
+
                 # for channel in range(0,X.shape[1]):    
-                #     X_res, y_res = sm.fit_resample(X[train,channel,:], y[train])
-                
+                #     X_res, y_res = sm.fit_resample(,)
+                # print("new test sizes",X_res.shape, y_res.shape )
+
+                print(X[train].shape)
+
                 history = model.fit(X[train], y_cat[train], 
-                        validation_data=(X[test], y_cat[test]),
-                        batch_size = 64, epochs = n_epochs, callbacks=[lrate], verbose = 2)
+                        validation_data=(X[train], y_cat[train]),
+                        batch_size = 16, epochs = n_epochs, verbose = 2)
 
                 y_predict = model.predict(X[test])
                 y_real = y_cat[test]
 
-                
+                matrix = confusion_matrix(y_real.argmax(axis=1), y_predict.argmax(axis=1))
                 print(y_predict)
                 print(y_real)
-                
+                print(matrix)
                 acc[split_ctr] = save_results(history,num_classes,n_ds,n_ch,T,split_ctr)
                 
                 print('Fold {:}\t{:.4f}\t{:.4f}'.format(split_ctr,acc[split_ctr,0], acc[split_ctr,1]))
