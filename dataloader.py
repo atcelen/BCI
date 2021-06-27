@@ -71,7 +71,7 @@ def load_labels(file):
 def norm_freq(f, fs):
     return f * 2 / fs
     
-def bandpass_multiEEG(data,f_low,f_high,fs):
+def bandpass_multiEEG(data,fs):
     '''
     Bandpass multi channel EEG
     
@@ -79,10 +79,6 @@ def bandpass_multiEEG(data,f_low,f_high,fs):
     ------
     data: np array (n_ch,n_s)
         EEG data
-    f_low: float
-        lower corner frequency [Hz]
-    f_high: float
-        upper corner_frequency [Hz]
     fs: float
         sampling frequency
     
@@ -94,15 +90,14 @@ def bandpass_multiEEG(data,f_low,f_high,fs):
 
     print("here", data.shape)
     
-    low_freq = norm_freq(f_low, fs)
-    high_freq = norm_freq(f_high, fs)
-    #Wn=[low_freq, high_freq], btype='bandpass'
+
     coef_filt = scipy.signal.butter(N=4,Wn=[0.008,0.32], output='sos',btype='bandpass')
     data_filt = np.zeros(data.shape)
+    # Applying a 50Hz-Notch and 1-40Hz Butterworth bandpass
     for trial in range(data.shape[0]):
         for chan in range(data.shape[1]):
             b_notch, a_notch = signal.iirnotch(50, 30, fs)
-            data_filt[trial,chan,:] =outputSignal = signal.filtfilt(b_notch, a_notch, data_filt[trial,chan,:])
+            data_filt[trial,chan,:] = signal.filtfilt(b_notch, a_notch, data_filt[trial,chan,:])
             data_filt[trial,chan,:] = scipy.signal.sosfiltfilt(coef_filt, x=data[trial, chan, :])
     return data_filt    
 def trim_start_end(filename, num_channels):
@@ -113,7 +108,9 @@ def trim_start_end(filename, num_channels):
     Params
     ------
     filename: string
-        path and name to the csv file 
+        path and name to the csv file
+    num_channels: integer
+        number of channels to use for analysis     
         
     '''    
     data = load_labels(filename)
@@ -133,17 +130,11 @@ def trim_start_end(filename, num_channels):
     trimmed_data = data[:,return_list[0]:return_list[1]+1]
     print(trimmed_data.shape)
     print(filename)
-    #final_data_cross = np.ndarray((4,8,500))
-    
     final_data_motor = np.ndarray((4,num_channels,1000))
-    
-    #final_data_break = np.ndarray((4,8,1000))
     
     for t in range(4):
     
         t_mul = 2500*t
-        
-        #fixation_cross = trimmed_data[2:10,t_mul:t_mul+500]
         if num_channels == 8:
             motor_movement = trimmed_data[2:10,t_mul+500:t_mul+1500]
         elif num_channels == 3:
@@ -151,19 +142,11 @@ def trim_start_end(filename, num_channels):
             motor_movement[0] = trimmed_data[5,t_mul+500:t_mul+1500]
             motor_movement[1:3] = trimmed_data[7:9,t_mul+500:t_mul+1500]    
         
-        #break_time = trimmed_data[2:10,t_mul+1500:t_mul+2500]
-        
-        #final_data_cross[t]=fixation_cross
-        
         final_data_motor[t]=motor_movement
-        
-        #final_data_break[t]=break_time
-        
     return final_data_motor
 
 
-#y = trim_start_end('session1_run1_Deniz.csv')
-#print(y)
+#Load the CSV files from your sessions
 protocols = ['run1.txt',
              'run2.txt',
              'run3.txt',
@@ -637,7 +620,7 @@ def trim_multiple(num_channels):
     for file in filenames:
         trimmed_files[counter:counter+4]= trim_start_end(file, num_channels)
         counter+=4
-    print(np.shape(trimmed_files))
+    #Plot the trimmed data
     plt.figure(1)
     plt.plot(trimmed_files[0,0,:])
     plt.show()
@@ -655,58 +638,47 @@ def trim_multiple(num_channels):
     plt.show()
     plt.plot(trimmed_files[7,0,:])
     plt.show()
-    trimmed_files_filtered = bandpass_multiEEG(trimmed_files,0.1,40,250)
+    trimmed_files_filtered = bandpass_multiEEG(trimmed_files,250)
     trimmed_files_filtered = np.asarray(trimmed_files_filtered)
+    #Plot the filtered data
     plt.figure(1)
-    #plt.plot(trimmed_files[0,0,:])
+    plt.plot(trimmed_files[0,0,:])
     plt.plot(trimmed_files_filtered[0,0,:])
     plt.show()
-    #plt.plot(trimmed_files[0,1,:])
+    plt.plot(trimmed_files[0,1,:])
     plt.plot(trimmed_files_filtered[1,0,:])
     plt.show()
-    #plt.plot(trimmed_files[0,2,:])
+    plt.plot(trimmed_files[0,2,:])
     plt.plot(trimmed_files_filtered[2,0,:])
     plt.show()
-    #plt.plot(trimmed_files[0,3,:])
+    plt.plot(trimmed_files[0,3,:])
     plt.plot(trimmed_files_filtered[3,0,:])
     plt.show()
 
     for trial in range(0, trimmed_files_filtered.shape[0]):
         for channel in range(0, trimmed_files_filtered.shape[1]):
-            max = np.max(trimmed_files_filtered[trial,channel,:])
-            min = np.min(trimmed_files_filtered[trial,channel,:])
-            X_std = (trimmed_files_filtered[trial,channel,:]-min) /(max-min)
-            #sum = np.sum(trimmed_files_filtered[trial,channel,:])
-            #ave = sum / (trimmed_files_filtered.shape[2])
-            #noBi = np.asarray(trimmed_files_filtered[trial,channel,:] - ave)
-            trimmed_files_filtered[trial][channel] = X_std
-            
-    # for trial in range(0, trimmed_files_filtered.shape[0]):
-    #     for channel in range(0, trimmed_files_filtered.shape[1]):
-    #         if trial % 4 == 0:
-    #             max = 0
-    #             for i in range(0,4):
-    #                 max_i = np.max(trimmed_files_filtered[trial+i,channel,:])
-    #                 if max_i > max:
-    #                     max = max_i
-    #             for i in range(0,4):
-    #                 trimmed_files_filtered[trial+i][channel] = trimmed_files_filtered[trial+i][channel] / max
-                        
-
-    plt.figure(1)
-    #plt.plot(trimmed_files[0,0,:])
-    plt.plot(trimmed_files_filtered[0,0,:])
-    plt.show()
-    #plt.plot(trimmed_files[0,1,:])
-    plt.plot(trimmed_files_filtered[1,0,:])
-    plt.show()
-    #plt.plot(trimmed_files[0,2,:])
-    plt.plot(trimmed_files_filtered[2,0,:])
-    plt.show()
-    #plt.plot(trimmed_files[0,3,:])
-    plt.plot(trimmed_files_filtered[3,0,:])
-    #plt.plot(trimmed_files[0,0,:])
-    plt.show()
+            sum = np.sum(trimmed_files_filtered[trial,channel,:])
+            ave = sum / (trimmed_files_filtered.shape[2])
+            trimmed_files_filtered[trial,channel,:] = np.asarray(trimmed_files_filtered[trial,channel,:] - ave)
+            max = np.argmax(trimmed_files_filtered[trial,channel,:])
+            max = trimmed_files_filtered[trial,channel,max]
+            trimmed_files_filtered[trial,channel,:] = trimmed_files_filtered[trial,channel,:] / max                     
+    
+    ##Plot the normalized data
+    # plt.figure(1)
+    # #plt.plot(trimmed_files[0,0,:])
+    # plt.plot(trimmed_files_filtered[0,0,:])
+    # plt.show()
+    # #plt.plot(trimmed_files[0,1,:])
+    # plt.plot(trimmed_files_filtered[1,0,:])
+    # plt.show()
+    # #plt.plot(trimmed_files[0,2,:])
+    # plt.plot(trimmed_files_filtered[2,0,:])
+    # plt.show()
+    # #plt.plot(trimmed_files[0,3,:])
+    # plt.plot(trimmed_files_filtered[3,0,:])
+    # #plt.plot(trimmed_files[0,0,:])
+    # plt.show()
     print(trimmed_files.shape, Y_loader(protocols).shape)
     return trimmed_files_filtered, Y_loader(protocols)
 

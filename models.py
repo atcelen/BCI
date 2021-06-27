@@ -77,14 +77,14 @@ def EEGNet(nb_classes, Chans=64, Samples=128, regRate=.25,
 	block1       = AveragePooling2D((1, poolLength))(block1) # changed from 4 to 8
 	block1       = dropoutType(dropoutRate)(block1)
 	
-	block2       = SeparableConv2D(F2, (1, 16),
-								   use_bias = False, padding = 'same')(block1)
-	block2       = BatchNormalization(axis = 1)(block2)
-	block2       = Activation('relu')(block2)
-	block2       = AveragePooling2D((1, 8))(block2)
-	block2       = dropoutType(dropoutRate)(block2)
+	# block2       = SeparableConv2D(F2, (1, 16),
+	# 				use_bias = False, padding = 'same')(block1)
+	# block2       = BatchNormalization(axis = 1)(block2)
+	# block2       = Activation('relu')(block2)
+	# block2       = AveragePooling2D((1, 8))(block2)
+	# block2       = dropoutType(dropoutRate)(block2)
 		
-	flatten      = Flatten(name = 'flatten')(block2)
+	flatten      = Flatten(name = 'flatten')(block1)
 	
 	dense        = Dense(nb_classes, name = 'dense', 
 						 kernel_constraint = max_norm(regRate))(flatten)
