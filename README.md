@@ -1,4 +1,3 @@
-Copyright (C) 2021 ETH Zurich, Switzerland. SPDX-License-Identifier: Apache-2.0. See LICENSE file for details.
 
 Authors: Ata Celen, Boran Deniz Yaralioglu
 
