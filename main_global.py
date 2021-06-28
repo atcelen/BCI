@@ -1,5 +1,5 @@
 #*----------------------------------------------------------------------------*
-#* Copyright (C) 2020 ETH Zurich, Switzerland                                 *
+#* Copyright (C) 2021 ETH Zurich, Switzerland                                 *
 #* SPDX-License-Identifier: Apache-2.0                                        *
 #*                                                                            *
 #* Licensed under the Apache License, Version 2.0 (the "License");            *
@@ -14,10 +14,8 @@
 #* See the License for the specific language governing permissions and        *
 #* limitations under the License.                                             *
 #*                                                                            *
-#* Authors: Batuhan Toemekce, Burak Kaya, Michael Hersche                     *
+#* Authors: Ata Celen, Deniz Yaralioglu                    *
 #*----------------------------------------------------------------------------*
-
-#!/usr/bin/env python3
 
 #################################################
 #
@@ -28,8 +26,6 @@
 
 import numpy as np
 import os
-# 
-import get_data as get
 import dataloader as dataLoader
 from tensorflow.keras import utils as np_utils
 from keras.callbacks import LearningRateScheduler
@@ -43,7 +39,6 @@ from sklearn.metrics import confusion_matrix
 # EEGNet models
 import models as models
 # Channel reduction, downsampling, time window
-from eeg_reduction import eeg_reduction
 
 os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"   # see issue #152
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
