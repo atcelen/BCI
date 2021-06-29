@@ -45,4 +45,5 @@ The "predictor.py" script has to be run first so that the navigation script can 
 ### License and Attribution
 In our project we have heavily used the training and validation methods from the paper :
 Xiaying Wang, Michael Hersche, Batuhan Tömekce, Burak Kaya, Michele Magno, Luca Benini, "An Accurate EEGNet-based Motor-Imagery Brain--Computer Interface for Low-Power Edge Computing", in IEEE International Symposium on Medical Measurements and Applications (MEMEA), 2020.
+https://github.com/MHersche/eegnet-based-embedded-bci 
 
